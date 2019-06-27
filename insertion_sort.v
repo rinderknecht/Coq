@@ -1,4 +1,3 @@
-
 Require Import List.
 
 Notation "[]"    := nil.
@@ -194,11 +193,11 @@ induction s as [|y s].
                      rewrite H1.
                      apply IHs.
                      apply H6.
-Qed.
+Defined.
 
-(* Soundness of insertion sort *)
+(* Insertion sort is indeed a sorting algorithm *)
 
-Theorem soundness :
+Theorem is_sorted :
   forall (a : Set) (cmp: total_order a) (s : list a),
   ord_list a cmp (sort a cmp s) /\ perm a (sort a cmp s) s.
 Proof.
@@ -219,7 +218,7 @@ split.
               -- exact H.
               -- apply perm_cons.
                  exact IHs.
-Qed.
+Defined.
 
 (*
 Lemma perm_insert :

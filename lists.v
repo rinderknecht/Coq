@@ -9,28 +9,28 @@ Notation "[ x ]" := (Cons _ x (Nil _)) (x at level 0).
 
 Print Grammar constr.
 
-Fixpoint len {a : Set} (s : seq a) : nat :=
+Fixpoint len (a : Set) (s : seq a) : nat :=
   match s with
          [] => 0
-  | [x | s] => 1 + len s
+  | [x | s] => 1 + len a s
   end.
 
-Fixpoint cat {a : Set} (s : seq a) (t : seq a) : seq a :=
+Fixpoint cat (a : Set) (s t : seq a) : seq a :=
   match s with
-         [] => t             (* alpha *)
-  | [x | s] => [x | cat s t] (* beta  *)
+         [] => t               (* alpha *)
+  | [x | s] => [x | cat a s t] (* beta  *)
   end.
 
 (* Page 13 *)
 
 Theorem cat_assoc : forall (a : Set) (s t u : seq a),
-  cat s (cat t u) = cat (cat s t) u.
+  cat a s (cat a t u) = cat a (cat a s t) u.
 
 Proof.
 induction s as [| x s].
   - intros t u.
-    change (cat [] (cat t u)) with (cat t u).
-    change (cat (cat [] t) u) with (cat t u).
+    change (cat a [] (cat a t u)) with (cat a t u).
+    change (cat a (cat a [] t) u) with (cat a t u).
     reflexivity.
   - intros t u.
     unfold cat at 1.
@@ -81,10 +81,10 @@ induction s.
     apply IHs.
 Qed.
 
-Fixpoint rev0 {a : Set} (s : seq a) : seq a :=
+Fixpoint rev0 (a : Set) (s : seq a) : seq a :=
   match s with
-         [] => []                (* gamma *)
-  | [x | s] => cat (rev0 s) [x]  (* delta *)
+         [] => []                    (* gamma *)
+  | [x | s] => cat a (rev0 a s) [x]  (* delta *)
   end.
 
 Theorem rev0_len : forall (a : Set) (s : seq a),
@@ -159,7 +159,7 @@ induction s.
     reflexivity.
 Qed.
 
-Fixpoint rcat (a : Set) (l : seq a) (acc : seq a) :=
+Fixpoint rcat (a : Set) (l acc : seq a) :=
   match l with
            Nil _ => acc
   | Cons _ hd tl => rcat a tl (Cons a hd acc)
@@ -167,7 +167,6 @@ Fixpoint rcat (a : Set) (l : seq a) (acc : seq a) :=
 
 Definition rev (a : Set) (l : seq a) :=
   rcat a l (Nil a).
-
 
 Lemma rev_cat : forall a (s t : seq a),
   rcat a s t = cat a (rev a s) t.
